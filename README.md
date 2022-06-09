@@ -4,7 +4,7 @@ GERADOR DE SENHAS: (FINALIZANDO)
 
   0) Listagem Vazia(100%)
 
-    a)avisar caso n tenha nenhuma senha e mostrar apenas as opções de criar nova senha e sair;
+    a)avisar caso n tenha nenhuma senha e mostrar apenas as opções de criar senha e sair;
   1) Criar Nova Senha (100%)
     
     a) Digitar a Finalidade da Senha (100%)
