@@ -6,7 +6,7 @@ GERADOR DE SENHAS: (FINALIZANDO)
     a) Digitar a Finalidade da Senha (100%)
     b) Digitar a Senha (100%)
         b.1) Digitação Manual (100%)
-            (CÔNUS) Faltando adicionar qual caracter é inválido no caso do usuário digitar um caractere fora do escolpo pre-determinado.
+            (BÔNUS) Faltando adicionar qual caracter é inválido no caso do usuário digitar um caractere fora do escolpo pre-determinado.
         b.2) Geração Automática (100%)
             (BÔNUS) Adicionar características que o usuário gostaria na hora de formar a senha.
     c) Voltar ao Menu Principal (100%)        
