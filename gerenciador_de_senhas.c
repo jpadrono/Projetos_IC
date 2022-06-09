@@ -4,7 +4,7 @@
 #include <time.h>
 #define NO_DE_CARACTERES 256
 
-//lembrar de tirar os acentos e ?
+//lembrar de tirar os acentos e cecidilha
 //verificar se todos os allocs foram livres
 //verificar se todos os arquivos foram fechados
 
@@ -26,7 +26,7 @@ int senha_valida(char *ptr);
 int n = 0, tamanho_da_senha = 16;
 char ch = '\n';
 
-//strings para geracao da senha automatica e validacao da senha manual (sem ?)
+//strings para geracao da senha automatica e validacao da senha manual (sem cecidilha)
 char alfabeto_min[] = {"zxcvbnmasdfghjklqwertyuiop"};
 char alfabeto_ma[] = {"ZXCVBNMASDFGHJKLQWERTYUIOP"};
 char numeros_e_especiais[] = {"0123456789@#$%&"};
@@ -184,7 +184,7 @@ void criar_senha(){
         case 1:
             printf("A senha deve ter no minimo:\n");
             printf("8 caracteres\n");
-            printf("1 letra maiuscula e 1 miuúscula\n");
+            printf("1 letra maiuscula e 1 miuÃºscula\n");
             printf("1 caractere numerico ou especial(@, #, $, %%, ou &)\n");
             do{
                 
@@ -208,9 +208,9 @@ void criar_senha(){
                 /***************************************************************
                 *rng com peso para decidir o tipo de caracter que sera inserido*
                 *pesos:                                                        *
-                *número ou caractere especial 2;                               *
-                *letra maiúscula 7;                                            *
-                *letra minúscula 7;                                            *
+                *nÃºmero ou caractere especial 2;                               *
+                *letra maiÃºscula 7;                                            *
+                *letra minÃºscula 7;                                            *
                 ***************************************************************/
                int var = rand() % 16;
                 if(var < 2){
