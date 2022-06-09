@@ -23,7 +23,7 @@ void criar_senha();
 void apresentar_senha();
 void apagar_senha();
 int senha_valida(char *ptr);
-int n = 0, tamanho_da_senha = 16;
+int n = 0, tamanho_da_senha = 16, fim = 0;
 char ch = '\n';
 
 //strings para geracao da senha automatica e validacao da senha manual (sem cecidilha)
@@ -53,37 +53,45 @@ int main(){
     int op_menu = 0;
     // Tela de selecao com as e escolhas
     // A tela ira aparecer ate que o usuario esoclha uma opcao existente
-    do{
-        printf("1 - Criar nova senha\n");
-        printf("2 - Apresentar senha salva\n");
-        printf("3 - Apagar senha salva\n");
-        printf("4 - sair\n");
-        scanf("%d", &op_menu);
-        if(op_menu == 4) return 0;
-        if(op_menu != 1 && op_menu != 2 && op_menu != 3) printf("opcao invalida\n");
-    } while(op_menu != 1 && op_menu != 2 && op_menu != 3);
+    while(1){
+        do{
+            printf("\n\tMENU PRINCIPAL\n");
+            printf("1 - Criar nova senha\n");
+            printf("2 - Apresentar senha salva\n");
+            printf("3 - Apagar senha salva\n");
+            printf("4 - sair\n");
+            scanf("%d", &op_menu);
+            if(op_menu == 4){
+                fim++;
+                break;
+            }
+            if(op_menu != 1 && op_menu != 2 && op_menu != 3) printf("opcao invalida\n");
+        } while(op_menu != 1 && op_menu != 2 && op_menu != 3);
 
+        if(fim){
+            for(int i = 0; i < n; i++){
+                free(ptr[i].senha);
+                free(ptr[i].finalidade);
+            }
+            return 0;
+        }
 
-   switch(op_menu){
-        case 1:
-            criar_senha();
-            break;
-        
-        case 2:
-            printf("\nLista de Finalidades:\n\n");
-            apresentar_senha();
-            break;
-    /*    
-        case 3:
-            apagar_senha();
-            break;*/
+        switch(op_menu){
+            case 1:
+                criar_senha();
+                break;
+
+            case 2:
+                printf("\nLista de Finalidades:\n\n");
+                apresentar_senha();
+                break;
+            /*    
+            case 3:
+                apagar_senha();
+                break;*/
+        }
+
     }
-
-    for(int i = 0; i < n; i++){
-        free(ptr[i].senha);
-        free(ptr[i].finalidade);
-    }
-    return 0;
 }
 
 void apresentar_senha(){
@@ -117,7 +125,7 @@ void apresentar_senha(){
      * //quantidade de '\n'                                                   *
      **************************************************************************/
     
-    //conta o n?mero de linhas do arquivo
+    //conta o número de linhas do arquivo
     while(!feof(fptr)){
         ch = fgetc(fptr);
         if(ch == '\n') count_end_line++;   
@@ -141,21 +149,27 @@ void apresentar_senha(){
 
     rewind(fptr);
     n_line = 0;
-    //inicio do processo para localiza??o e escrita da senha
+    //inicio do processo para localização e escrita da senha
     printf("\nDigite o numero da senha a ser exibida: ");
     int escolha;
     scanf("%d", &escolha);
 
+    printf("\nFinalidade: ");
     while(!feof(fptr)){
         ch = fgetc(fptr);
-        //printa a finalidade para -2 e senha para -1
-        if(n_line == 2*escolha-2 || n_line == 2*escolha-1){
+
+        //printa a finalidade
+        if(n_line == 2*escolha-2){
+            printf("%c", ch);
+            if(ch == '\n') printf("Senha: ");
+        }
+        //printa a senha
+        if(n_line == 2*escolha-1){
             printf("%c", ch);
         }
         if(ch == '\n') n_line++;
-        
     }
-
+    
     fclose(fptr);
 
 
@@ -184,7 +198,7 @@ void criar_senha(){
         case 1:
             printf("A senha deve ter no minimo:\n");
             printf("8 caracteres\n");
-            printf("1 letra maiuscula e 1 miuúscula\n");
+            printf("1 letra maiuscula e 1 miuъscula\n");
             printf("1 caractere numerico ou especial(@, #, $, %%, ou &)\n");
             do{
                 
@@ -208,9 +222,9 @@ void criar_senha(){
                 /***************************************************************
                 *rng com peso para decidir o tipo de caracter que sera inserido*
                 *pesos:                                                        *
-                *número ou caractere especial 2;                               *
-                *letra maiúscula 7;                                            *
-                *letra minúscula 7;                                            *
+                *nъmero ou caractere especial 2;                               *
+                *letra maiъscula 7;                                            *
+                *letra minъscula 7;                                            *
                 ***************************************************************/
                int var = rand() % 16;
                 if(var < 2){
@@ -297,6 +311,4 @@ void salvar_senha(password *ptr){
 
     fclose(senhas_salvas);
     return 0;
-    
-
 }
