@@ -85,10 +85,11 @@ int main(){
                 printf("\nLista de Finalidades:\n\n");
                 apresentar_senha();
                 break;
-            /*    
+                
             case 3:
+                printf("\nLista de Finalidades:\n\n");
                 apagar_senha();
-                break;*/
+                break;
         }
 
     }
@@ -175,6 +176,80 @@ void apresentar_senha(){
 
 }
 
+void apagar_senha(){
+    // inicio quase igual ao apresentar senha
+    //adição do ponteiro auxiliar para escrita do novo arquivo de senhas
+    FILE *fptr, *fptr_aux;
+    fptr = fopen("senhas_salvas.txt", "rb");
+    fptr_aux = fopen("senhas_aux.txt", "w+b");
+
+
+    if(fptr == NULL || fptr_aux == NULL){
+        printf("Erro ao abrir o arquivo!/n");
+        exit(0);
+    }
+    int count_end_line = 0;
+    
+    while(!feof(fptr)){
+        ch = fgetc(fptr);
+        if(ch == '\n') count_end_line++;   
+    }
+
+    rewind(fptr);
+
+    int n_line = 0;
+
+    ch = '\n';
+    while(!feof(fptr)){
+        if((n_line+1)&1 && ch == '\n' && n_line < count_end_line){                              
+            printf("%d - ", (n_line+2)/2);
+        }
+        ch = fgetc(fptr);
+        if(!(n_line&1)){                                             
+            printf("%c", ch);                                                
+        }                                                                    
+        if(ch == '\n') n_line++;
+    }
+
+    rewind(fptr);
+    n_line = 0;
+
+    //inicio do processo de apagar a senha
+    printf("\nDigite o numero da senha a ser excluida: ");
+    int escolha;
+    scanf("%d", &escolha);
+
+    while(1){
+        ch = fgetc(fptr);
+        if(n_line != (escolha*2-2) && n_line != (escolha*2-1)){
+            fputc(ch, fptr_aux);
+        }
+        if(ch == '\n') n_line++;
+        if(n_line == count_end_line) break;
+    }
+
+    //os arquivos serao abertos com as funcoes invertidas mantendo fptr como
+    // o arquivo principal
+    n_line = 0;
+    fclose(fptr);
+    fclose(fptr_aux);
+
+    fptr = fopen("senhas_salvas.txt", "wb");
+    fptr_aux = fopen("senhas_aux.txt", "rb");
+
+    while(1){
+        ch = fgetc(fptr_aux);
+        fputc(ch, fptr);
+        if(ch == '\n') n_line++;
+        if(n_line == count_end_line-2) break;
+    }
+
+    fclose(fptr);
+    fclose(fptr_aux);
+
+
+}
+
 void criar_senha(){
 
     password *ptr = NULL;
@@ -209,7 +284,7 @@ void criar_senha(){
             printf("A senha criada foi: %s\n", ptr[n].senha);
 
             //para listas encadeadas
-            ptr = (password *) realloc(ptr, ((n++)+1)*sizeof(password));
+            ptr = (password *) realloc(ptr, ((n)+1)*sizeof(password));
             if(ptr == NULL){
                 printf("Erro de alocacao");
                 exit(1);
@@ -241,7 +316,7 @@ void criar_senha(){
             salvar_senha(&ptr[n]); 
             printf("A senha gerada foi: %s\n", ptr[n].senha);
             //para listas encadeadas
-            ptr = (password *) realloc(ptr, ((n++)+1)*sizeof(password));
+            ptr = (password *) realloc(ptr, ((n)+1)*sizeof(password));
             if(ptr == NULL){
                 printf("Erro de alocacao");
                 exit(1);
