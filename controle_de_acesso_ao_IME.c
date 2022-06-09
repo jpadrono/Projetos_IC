@@ -23,4 +23,8 @@ typedef struct _controle{
 
 controle *ptr_inicio = NULL;
 
-void 
+void inserir(controle *ptr);
+void listar();
+controle* buscar(controle*ptr);
+void apagar(controle *ptr);
+
