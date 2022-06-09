@@ -23,6 +23,7 @@ void criar_senha();
 void apresentar_senha();
 void apagar_senha();
 int senha_valida(char *ptr);
+int lista_vazia();
 int n = 0, tamanho_da_senha = 16, fim = 0;
 char ch = '\n';
 
@@ -42,6 +43,8 @@ int *caracteres_da_string(char *str){
 
 int main(){
 
+    FILE *fptr;
+    fptr = open("senhas_salvas.txt", "rb");
     /*******************************************************************
     * seta a seed da funcao rand como o tempo desde 01/01/1970         *
     * assim para cada execucao teremos uma nova seed                   *
@@ -51,7 +54,22 @@ int main(){
     *******************************************************************/
     srand(time(NULL));
     int op_menu = 0;
-    // Tela de selecao com as e escolhas
+    //Primeir tela de selecao (quando n tiver nenhuma senha);
+    if(filelength(fptr) == 0 || filelength(fptr) == -1){
+        do{
+            printf("\n\tLISTAGEM VAZIA\n");
+            printf("1 - Criar senha\n");
+            printf("2 - sair\n");
+            scanf(" %d", &op_menu);
+            if(op_menu == 2){
+                printf("\n\tO Programa Foi Finalizado!\n\t");
+                exit(0);
+            }
+            if(op_menu != 1) printf("opcao invalida\n");
+        } while(op_menu != 1);
+        criar_senha();
+    }
+    // Tela de selecao com as escolhas
     // A tela ira aparecer ate que o usuario esoclha uma opcao existente
     while(1){
         do{
@@ -60,7 +78,7 @@ int main(){
             printf("2 - Apresentar senha salva\n");
             printf("3 - Apagar senha salva\n");
             printf("4 - sair\n");
-            scanf("%d", &op_menu);
+            scanf(" %d", &op_menu);
             if(op_menu == 4){
                 fim++;
                 break;
@@ -126,10 +144,16 @@ void apresentar_senha(){
      * //quantidade de '\n'                                                   *
      **************************************************************************/
     
-    //conta o número de linhas do arquivo
+    //conta o numero de linhas do arquivo
     while(!feof(fptr)){
-        ch = fgetc(fptr);
-        if(ch == '\n') count_end_line++;   
+        if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            /*
+            //verificar p q a ultima leitura está retornando 0
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+            */
+        }
+        if(ch == '\n') count_end_line++;
     }
     // reseta o ponteiro para o inicio do arquivo
     rewind(fptr);
@@ -138,10 +162,10 @@ void apresentar_senha(){
     //reseta o ch
     ch = '\n';
     while(!feof(fptr)){
-        if((n_line+1)&1 && ch == '\n' && n_line < count_end_line){                              
+        if((n_line+1)&1 && ch == '\n' && n_line < count_end_line-1){                              
             printf("%d - ", (n_line+2)/2);
         }
-        ch = fgetc(fptr);
+        fread(&ch, sizeof(char), 1, fptr);
         if(!(n_line&1)){                                             
             printf("%c", ch);                                                
         }                                                                    
@@ -150,14 +174,14 @@ void apresentar_senha(){
 
     rewind(fptr);
     n_line = 0;
-    //inicio do processo para localização e escrita da senha
+    //inicio do processo para localiza??o e escrita da senha
     printf("\nDigite o numero da senha a ser exibida: ");
     int escolha;
-    scanf("%d", &escolha);
+    scanf(" %d", &escolha);
 
     printf("\nFinalidade: ");
     while(!feof(fptr)){
-        ch = fgetc(fptr);
+        fread(&ch, sizeof(char), 1, fptr);
 
         //printa a finalidade
         if(n_line == 2*escolha-2){
@@ -178,10 +202,10 @@ void apresentar_senha(){
 
 void apagar_senha(){
     // inicio quase igual ao apresentar senha
-    //adição do ponteiro auxiliar para escrita do novo arquivo de senhas
+    //adicao do ponteiro auxiliar para escrita do novo arquivo de senhas
     FILE *fptr, *fptr_aux;
     fptr = fopen("senhas_salvas.txt", "rb");
-    fptr_aux = fopen("senhas_aux.txt", "w+b");
+    fptr_aux = fopen("senhas_aux.txt", "wb");
 
 
     if(fptr == NULL || fptr_aux == NULL){
@@ -191,7 +215,10 @@ void apagar_senha(){
     int count_end_line = 0;
     
     while(!feof(fptr)){
-        ch = fgetc(fptr);
+        if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+        }
         if(ch == '\n') count_end_line++;   
     }
 
@@ -201,10 +228,13 @@ void apagar_senha(){
 
     ch = '\n';
     while(!feof(fptr)){
-        if((n_line+1)&1 && ch == '\n' && n_line < count_end_line){                              
+        if((n_line+1)&1 && ch == '\n' && n_line < count_end_line-1){                              
             printf("%d - ", (n_line+2)/2);
         }
-        ch = fgetc(fptr);
+        if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+        }
         if(!(n_line&1)){                                             
             printf("%c", ch);                                                
         }                                                                    
@@ -217,15 +247,21 @@ void apagar_senha(){
     //inicio do processo de apagar a senha
     printf("\nDigite o numero da senha a ser excluida: ");
     int escolha;
-    scanf("%d", &escolha);
+    scanf(" %d", &escolha);
 
     while(1){
-        ch = fgetc(fptr);
+        if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+        }
         if(n_line != (escolha*2-2) && n_line != (escolha*2-1)){
-            fputc(ch, fptr_aux);
+            if(fwrite(&ch, sizeof(char), 1, fptr_aux) != 1){
+                printf("Erro na escrita do arquivo!\n");
+                exit(0);
+            }
         }
         if(ch == '\n') n_line++;
-        if(n_line == count_end_line) break;
+        if(n_line == count_end_line-1) break;
     }
 
     //os arquivos serao abertos com as funcoes invertidas mantendo fptr como
@@ -234,14 +270,22 @@ void apagar_senha(){
     fclose(fptr);
     fclose(fptr_aux);
 
-    fptr = fopen("senhas_salvas.txt", "wb");
+    fptr = fopen("senhas_salvas.txt", "w+b");
     fptr_aux = fopen("senhas_aux.txt", "rb");
 
-    while(1){
-        ch = fgetc(fptr_aux);
-        fputc(ch, fptr);
-        if(ch == '\n') n_line++;
+    while(!feof(fptr_aux)){
+        if(ch == '\n') ++n_line;
         if(n_line == count_end_line-2) break;
+        if(fread(&ch, sizeof(char), 1, fptr_aux) != 1){
+
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+        }
+        if(fwrite(&ch, sizeof(char), 1, fptr) != 1){
+
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+            }
     }
 
     fclose(fptr);
@@ -273,7 +317,7 @@ void criar_senha(){
         case 1:
             printf("A senha deve ter no minimo:\n");
             printf("8 caracteres\n");
-            printf("1 letra maiuscula e 1 miuъscula\n");
+            printf("1 letra maiuscula e 1 miuúscula\n");
             printf("1 caractere numerico ou especial(@, #, $, %%, ou &)\n");
             do{
                 
@@ -297,9 +341,9 @@ void criar_senha(){
                 /***************************************************************
                 *rng com peso para decidir o tipo de caracter que sera inserido*
                 *pesos:                                                        *
-                *nъmero ou caractere especial 2;                               *
-                *letra maiъscula 7;                                            *
-                *letra minъscula 7;                                            *
+                *número ou caractere especial 2;                               *
+                *letra maiúscula 7;                                            *
+                *letra minúscula 7;                                            *
                 ***************************************************************/
                int var = rand() % 16;
                 if(var < 2){
@@ -313,7 +357,7 @@ void criar_senha(){
                 }
             }
             strcpy(ptr[n].senha, temp);
-            salvar_senha(&ptr[n]); 
+            salvar_senha(&ptr[n]);
             printf("A senha gerada foi: %s\n", ptr[n].senha);
             //para listas encadeadas
             ptr = (password *) realloc(ptr, ((n)+1)*sizeof(password));
@@ -373,17 +417,28 @@ int senha_valida(char *ptr){
 }
 
 void salvar_senha(password *ptr){
-    FILE *senhas_salvas;
-    senhas_salvas = fopen("senhas_salvas.txt", "ab");
-    if(senhas_salvas == NULL) {
+    FILE *fptr;
+    fptr = fopen("senhas_salvas.txt", "ab");
+    if(fptr == NULL) {
     printf( "Erro na abertura do arquivo");
     exit(0);
     }
-    fputs(ptr[n].finalidade, senhas_salvas);
-    fputs("\n", senhas_salvas);
-    fputs(ptr[n].senha, senhas_salvas);
-    fputs("\n", senhas_salvas);
+    if(fwrite(&ptr[n].finalidade, sizeof(char), strlen(ptr[n].finalidade), fptr) != strlen(ptr[n].finalidade)){
+        printf("Erro na escrita do arquivo!\n");
+        exit(0);
+    }
+    if(fwrite(&ch, sizeof(char), 1, fptr) != 1){
+        printf("Erro na escrita do arquivo!\n");
+        exit(0);
+    }
+    if(fwrite(&ptr[n].senha, sizeof(char), strlen(ptr[n].senha), fptr) != strlen(ptr[n].senha)){
+        printf("Erro na escrita do arquivo!\n");
+        exit(0);
+    }
+    if(fwrite(&ch, sizeof(char), 1, fptr) != 1){
+        printf("Erro na escrita do arquivo!\n");
+        exit(0);
+    }
 
-    fclose(senhas_salvas);
-    return 0;
+    fclose(fptr);
 }
