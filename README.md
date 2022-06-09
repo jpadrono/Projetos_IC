@@ -1,6 +1,7 @@
 # Projetos_IC
 Projetos:
 GERADOR DE SENHAS: (FINALIZANDO)
+
   0) Listagem Vazia(100%)
 
     a)avisar caso n tenha nenhuma senha e mostrar apenas as opções de criar nova senha e sair;
