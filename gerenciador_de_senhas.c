@@ -374,7 +374,7 @@ int senha_valida(char *ptr){
 
 void salvar_senha(password *ptr){
     FILE *senhas_salvas;
-    senhas_salvas = fopen("C:\\Users\\Lenovo\\programas vscode\\IME\\gerenciador de senhas\\senhas_salvas.txt", "ab");
+    senhas_salvas = fopen("senhas_salvas.txt", "ab");
     if(senhas_salvas == NULL) {
     printf( "Erro na abertura do arquivo");
     exit(0);
