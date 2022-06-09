@@ -1,7 +1,6 @@
 # Projetos_IC
 Projetos:
 GERADOR DE SENHAS: (EM ANDAMENTO)
-              TÓPICOS
   1) Criar Nova Senha (97%)
     
     a) Digitar a Finalidade da Senha (100%)
