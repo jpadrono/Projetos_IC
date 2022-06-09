@@ -1,7 +1,10 @@
 # Projetos_IC
 Projetos:
 GERADOR DE SENHAS: (FINALIZANDO)
-  1) Criar Nova Senha (90%)
+  0) Listagem Vazia(100%)
+
+    a)avisar caso n tenha nenhuma senha e mostrar apenas as opções de criar nova senha e sair;
+  1) Criar Nova Senha (100%)
     
     a) Digitar a Finalidade da Senha (100%)
     b) Digitar a Senha (100%)
@@ -10,7 +13,6 @@ GERADOR DE SENHAS: (FINALIZANDO)
         b.2) Geração Automática (100%)
             (BÔNUS) Adicionar características que o usuário gostaria na hora de formar a senha.
     c) Voltar ao Menu Principal (100%)
-    d) Criar Arquivo Binário (0%)
   2) Apresentar Senha Salva (100%)
     
     a) Impressão das Finalidades (100%)
