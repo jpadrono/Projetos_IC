@@ -1,6 +1,6 @@
 # Projetos_IC
 Projetos:
-GERADOR DE SENHAS: (FINALIZANDO)
+GERADOR DE SENHAS: (CONCLUINDO)
 
   0) Listagem Vazia(100%)
 
@@ -30,4 +30,17 @@ GERADOR DE SENHAS: (FINALIZANDO)
 
 TELA DE BOAS VINDAS
 
-CONTROLE DE ACESSO AO IME
+CONTROLE DE ACESSO AO IME: (PARA O GRUPO)
+
+  0) Criar Arquivo Com os Dados (98%)
+
+    a) Confirmar se o arquivo deve ser mantido ou sobrescrito
+  1) Lista Encadeada (64%)
+  
+    a) Leitura dos Dados (100%)
+    b) Validação dos Dados (0%)
+    c) Listagem dos Dados (90%)
+      obs) Melhorar o desing de apresentação das listas
+      obs) Apresentar a mensagem "Lista Vazia" nos casos em que ocorra
+      obs) Interessante apresentar os dados por dia
+      
