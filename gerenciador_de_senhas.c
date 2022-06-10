@@ -57,6 +57,7 @@ int main(){
     //Primeir tela de selecao (quando n tiver nenhuma senha);
     if(filelength(fptr) == 0 || filelength(fptr) == -1){
         do{
+
             printf("\n\tLISTAGEM VAZIA\n");
             printf("1 - Criar senha\n");
             printf("2 - sair\n");
@@ -65,7 +66,10 @@ int main(){
                 printf("\n\tO Programa Foi Finalizado!\n\t");
                 exit(0);
             }
-            if(op_menu != 1) printf("opcao invalida\n");
+            if(op_menu != 1){
+                printf("opcao invalida\n");
+                getchar();
+            }
         } while(op_menu != 1);
         criar_senha();
     }
@@ -83,7 +87,10 @@ int main(){
                 fim++;
                 break;
             }
-            if(op_menu != 1 && op_menu != 2 && op_menu != 3) printf("opcao invalida\n");
+            if(op_menu != 1 && op_menu != 2 && op_menu != 3){
+                printf("opcao invalida\n");
+                getchar();
+            };
         } while(op_menu != 1 && op_menu != 2 && op_menu != 3);
 
         if(fim){
@@ -174,15 +181,21 @@ void apresentar_senha(){
 
     rewind(fptr);
     n_line = 0;
-    //inicio do processo para localiza??o e escrita da senha
-    printf("\nDigite o numero da senha a ser exibida: ");
+    //inicio do processo para localizacao e escrita da senha
     int escolha;
-    scanf(" %d", &escolha);
+    do{
+        printf("\nDigite o numero da senha a ser exibida: ");
+        scanf(" %d", &escolha);
+        if(escolha > count_line() || escolha < 1){
+            printf("Escolha invalida!\n");
+            getchar();
+        }
+    } while(escolha > count_line() || escolha < 1);
 
     printf("\nFinalidade: ");
     while(!feof(fptr)){
-        fread(&ch, sizeof(char), 1, fptr);
 
+        fread(&ch, sizeof(char), 1, fptr);
         //printa a finalidade
         if(n_line == 2*escolha-2){
             printf("%c", ch);
@@ -200,15 +213,32 @@ void apresentar_senha(){
 
 }
 
+int count_line(){
+    int count_n_line = 0;
+    FILE *fptr;
+    ptr = fopen("senhas_salvas.bin", "rb");
+    while(!feof(fptr)){
+        if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            /*
+            printf("Erro na leitura do arquivo!\n");
+            exit(0);
+            */
+        }
+        if(ch == '\n') count_n_line++;  
+    }
+
+    rewind(fptr);
+    return (count_n_line)/2;
+}
+
 void apagar_senha(){
     // inicio quase igual ao apresentar senha
     //adicao do ponteiro auxiliar para escrita do novo arquivo de senhas
     FILE *fptr, *fptr_aux;
     fptr = fopen("senhas_salvas.txt", "rb");
-    fptr_aux = fopen("senhas_aux.txt", "wb");
 
 
-    if(fptr == NULL || fptr_aux == NULL){
+    if(fptr == NULL){
         printf("Erro ao abrir o arquivo!/n");
         exit(0);
     }
@@ -216,24 +246,32 @@ void apagar_senha(){
     
     while(!feof(fptr)){
         if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            /*
             printf("Erro na leitura do arquivo!\n");
             exit(0);
+            */
         }
         if(ch == '\n') count_end_line++;   
     }
-
     rewind(fptr);
 
     int n_line = 0;
 
     ch = '\n';
+    fptr_aux = fopen("senhas_aux.txt", "wb");
+    if(fptr == NULL){
+        printf("Erro ao abrir o arquivo!/n");
+        exit(0);
+    }
     while(!feof(fptr)){
         if((n_line+1)&1 && ch == '\n' && n_line < count_end_line-1){                              
             printf("%d - ", (n_line+2)/2);
         }
         if(fread(&ch, sizeof(char), 1, fptr) != 1){
+            /*
             printf("Erro na leitura do arquivo!\n");
             exit(0);
+            */
         }
         if(!(n_line&1)){                                             
             printf("%c", ch);                                                
@@ -245,9 +283,15 @@ void apagar_senha(){
     n_line = 0;
 
     //inicio do processo de apagar a senha
-    printf("\nDigite o numero da senha a ser excluida: ");
-    int escolha;
-    scanf(" %d", &escolha);
+    int escolha = 0;
+    do{
+        printf("\nDigite o numero da senha a ser excluida: ");
+        scanf(" %d", &escolha);
+        if(escolha > count_line() || escolha < 1){
+            printf("Escolha invalida!\n");
+            getchar();
+        }
+    } while(escolha > count_line() || escolha < 1);
 
     while(1){
         if(fread(&ch, sizeof(char), 1, fptr) != 1){
@@ -303,7 +347,10 @@ void criar_senha(){
         printf("1 - Digitacao manual\n");
         printf("2 - Geracao automatica\n");
         scanf(" %d", &op_senha);
-        if(op_senha != 1 && op_senha != 2) printf("Opcao invalida\n");
+        if(op_senha != 1 && op_senha != 2){
+            printf("Opcao invalida\n");
+            getchar();
+        }
     }while(op_senha != 1 && op_senha != 2);
 
     //aloca memoria para um novo no
@@ -317,7 +364,7 @@ void criar_senha(){
         case 1:
             printf("A senha deve ter no minimo:\n");
             printf("8 caracteres\n");
-            printf("1 letra maiuscula e 1 miuúscula\n");
+            printf("1 letra maiuscula e 1 maiuscula\n");
             printf("1 caractere numerico ou especial(@, #, $, %%, ou &)\n");
             do{
                 
