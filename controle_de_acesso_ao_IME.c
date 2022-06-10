@@ -153,7 +153,13 @@ void inserir(controle **ptr){
     }
     return; 
 }
-// printa a linha com todas as informacoes do cadastro
+/****************************************************************************** 
+*printa a linha com todas as informacoes do cadastro                          *
+* para a apresentacao das litar por dia eh possivel a criacao de uma nova     *
+* funcao imprimir_sem_ data onde a data n eh impressa                         *
+* tbm eh possivel a chamada da funcao apresentar 2 variaveis, onde a variavel *
+* 2 (int data) imprime a data caso seja TRUE(1) e n imprime caso seja FALSE(0)*
+*******************************************************************************/
 void imprimir(controle *ptr){
     for(int i = 0; i < 7; i++){
         switch(i){
