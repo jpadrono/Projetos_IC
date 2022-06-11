@@ -516,7 +516,7 @@ void salvar_senha(password *ptr){
 
 void lista_vazia(FILE *fptr){
     int op_menu;
-    if(1){
+    if(!count_line()){
         do{
             printf("\t\t----------------\n");
             printf("\t\t|LISTAGEM VAZIA|\n");
