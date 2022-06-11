@@ -23,8 +23,10 @@ void criar_senha();
 void apresentar_senha();
 void apagar_senha();
 int senha_valida(char *ptr);
-int lista_vazia();
-int n = 0, tamanho_da_senha = 16, fim = 0;
+int count_line();
+void lista_vazia();
+void vanish();
+int n = 0, tamanho_da_senha = 16, fim = 0, sistema = -1;
 char ch = '\n';
 
 //strings para geracao da senha automatica e validacao da senha manual (sem cecidilha)
@@ -42,9 +44,19 @@ int *caracteres_da_string(char *str){
 }
 
 int main(){
+    /*
+    do{
+        printf("Qual o Sistema Operacional?!\n");
+        printf("1 - Windows\n2 - Linux\n");
+        scanf(" %d", sistema);
+        if(sistema != 1 && sistema != 2){
+            printf("Opcao Invalida!");
+            getchar();
+        }    
+    }while(sistema != 1 && sistema && 2);*/
 
     FILE *fptr;
-    fptr = open("senhas_salvas.txt", "rb");
+    fptr = open("senhas_salvas.bin", "rb");
     /*******************************************************************
     * seta a seed da funcao rand como o tempo desde 01/01/1970         *
     * assim para cada execucao teremos uma nova seed                   *
@@ -55,24 +67,7 @@ int main(){
     srand(time(NULL));
     int op_menu = 0;
     //Primeir tela de selecao (quando n tiver nenhuma senha);
-    if(filelength(fptr) == 0 || filelength(fptr) == -1){
-        do{
-
-            printf("\n\tLISTAGEM VAZIA\n");
-            printf("1 - Criar senha\n");
-            printf("2 - sair\n");
-            scanf(" %d", &op_menu);
-            if(op_menu == 2){
-                printf("\n\tO Programa Foi Finalizado!\n\t");
-                exit(0);
-            }
-            if(op_menu != 1){
-                printf("opcao invalida\n");
-                getchar();
-            }
-        } while(op_menu != 1);
-        criar_senha();
-    }
+    lista_vazia(fptr);
     // Tela de selecao com as escolhas
     // A tela ira aparecer ate que o usuario esoclha uma opcao existente
     while(1){
@@ -83,6 +78,7 @@ int main(){
             printf("3 - Apagar senha salva\n");
             printf("4 - sair\n");
             scanf(" %d", &op_menu);
+            /*system("cls");*/
             if(op_menu == 4){
                 fim++;
                 break;
@@ -90,6 +86,7 @@ int main(){
             if(op_menu != 1 && op_menu != 2 && op_menu != 3){
                 printf("opcao invalida\n");
                 getchar();
+                /*system("cls")*/
             };
         } while(op_menu != 1 && op_menu != 2 && op_menu != 3);
 
@@ -107,13 +104,23 @@ int main(){
                 break;
 
             case 2:
-                printf("\nLista de Finalidades:\n\n");
-                apresentar_senha();
+                if(!filelength(fptr)){
+                    lista_vazia(fptr);
+                }
+                else{
+                    printf("\nLista de Finalidades:\n\n");
+                    apresentar_senha(); 
+                }
                 break;
                 
             case 3:
-                printf("\nLista de Finalidades:\n\n");
-                apagar_senha();
+                if(!filelength(fptr)){
+                    lista_vazia(fptr);
+                }
+                else{
+                    printf("\nLista de Finalidades:\n\n");
+                    apagar_senha(); 
+                }
                 break;
         }
 
@@ -122,7 +129,7 @@ int main(){
 
 void apresentar_senha(){
     FILE *fptr;
-    fptr = fopen("senhas_salvas.txt", "rb");
+    fptr = fopen("senhas_salvas.bin", "rb");
 
     if(fptr == NULL){
         printf("Erro ao abrir o arquivo!/n");
@@ -235,7 +242,7 @@ void apagar_senha(){
     // inicio quase igual ao apresentar senha
     //adicao do ponteiro auxiliar para escrita do novo arquivo de senhas
     FILE *fptr, *fptr_aux;
-    fptr = fopen("senhas_salvas.txt", "rb");
+    fptr = fopen("senhas_salvas.bin", "rb");
 
 
     if(fptr == NULL){
@@ -258,7 +265,7 @@ void apagar_senha(){
     int n_line = 0;
 
     ch = '\n';
-    fptr_aux = fopen("senhas_aux.txt", "wb");
+    fptr_aux = fopen("senhas_aux.bin", "wb");
     if(fptr == NULL){
         printf("Erro ao abrir o arquivo!/n");
         exit(0);
@@ -314,8 +321,8 @@ void apagar_senha(){
     fclose(fptr);
     fclose(fptr_aux);
 
-    fptr = fopen("senhas_salvas.txt", "w+b");
-    fptr_aux = fopen("senhas_aux.txt", "rb");
+    fptr = fopen("senhas_salvas.bin", "w+b");
+    fptr_aux = fopen("senhas_aux.bin", "rb");
 
     while(!feof(fptr_aux)){
         if(ch == '\n') ++n_line;
@@ -344,8 +351,9 @@ void criar_senha(){
     // Tela de selecao com a escolha da formacao da senha
     int op_senha;
     do{
-        printf("1 - Digitacao manual\n");
-        printf("2 - Geracao automatica\n");
+        printf("Selecione o Metodo de Criação:\n");
+        printf("1 - Digitacao Manual\n");
+        printf("2 - Geracao Automatica\n");
         scanf(" %d", &op_senha);
         if(op_senha != 1 && op_senha != 2){
             printf("Opcao invalida\n");
@@ -357,18 +365,18 @@ void criar_senha(){
     ptr = (password *) malloc(sizeof(password));
 
     *ptr[n].finalidade = NULL;
-    printf("Digite a finalidade da senha: ");
+    printf("\nDigite a Finalidade da Senha: ");
     scanf(" %[^\n]", ptr[n].finalidade);
 
     switch(op_senha){
         case 1:
-            printf("A senha deve ter no minimo:\n");
-            printf("8 caracteres\n");
-            printf("1 letra maiuscula e 1 maiuscula\n");
-            printf("1 caractere numerico ou especial(@, #, $, %%, ou &)\n");
+            printf("\nA Senha Deve Ter no Minimo:\n");
+            printf("8 Caracteres\n");
+            printf("1 Letra Maiuscula e 1 Minuscula\n");
+            printf("1 Caractere Numerico ou Especial(@, #, $, %%, ou &)\n");
             do{
                 
-                printf("Digite a senha: ");
+                printf("Digite a Senha: ");
                 scanf(" %[^\n]", ptr[n].senha);
             } while (!senha_valida(ptr[n].senha));
             salvar_senha(&ptr[n]);
@@ -433,11 +441,16 @@ int senha_valida(char *ptr){
     int no_alfabeto_min = 0, no_alfabeto_ma = 0, no_numeros_e_especiais = 0;
     for(int i = 0; i < strlen(ptr); i++){
         //verifica se o char ptr[i] esta em alfabeto_min
-       if(count_alfabeto_min[ptr[i]]) no_alfabeto_min++; 
-       //verifica se o char ptr[i] esta em alfabeto_ma
-       else if(count_alfabeto_ma[ptr[i]]) no_alfabeto_ma++; 
-       //verifica se o char ptr[i] esta nemnumeros_e_especiais
-       else if(count_numeros_e_especiais[ptr[i]]) no_numeros_e_especiais++;
+        if(count_alfabeto_min[ptr[i]]) no_alfabeto_min++; 
+        //verifica se o char ptr[i] esta em alfabeto_ma
+        else if(count_alfabeto_ma[ptr[i]]) no_alfabeto_ma++; 
+        //verifica se o char ptr[i] esta nemnumeros_e_especiais
+        else if(count_numeros_e_especiais[ptr[i]]) no_numeros_e_especiais++;
+        else{
+            printf("O Caractere %c n\n");
+            return 0;
+        }
+
     }
 
     if(!no_alfabeto_min){
@@ -465,7 +478,7 @@ int senha_valida(char *ptr){
 
 void salvar_senha(password *ptr){
     FILE *fptr;
-    fptr = fopen("senhas_salvas.txt", "ab");
+    fptr = fopen("senhas_salvas.bin", "ab");
     if(fptr == NULL) {
     printf( "Erro na abertura do arquivo");
     exit(0);
@@ -489,3 +502,38 @@ void salvar_senha(password *ptr){
 
     fclose(fptr);
 }
+
+void lista_vazia(FILE *fptr){
+    int op_menu;
+    if(filelength(fptr) == 0 || filelength(fptr) == -1){
+        do{
+
+            printf("\n\tLISTAGEM VAZIA\n");
+            printf("1 - Criar senha\n");
+            printf("2 - Finalizar Programa\n");
+            scanf(" %d", &op_menu);
+            /*system("cls");*/
+            if(op_menu == 2){
+                for(int i = 0; i < n; i++){
+                    free(ptr[i].senha);
+                    free(ptr[i].finalidade);
+                }
+                system("cls");
+                printf("\n\tO Programa Foi Finalizado!\n\t");
+                exit(0);
+            }
+            if(op_menu != 1){
+                printf("opcao invalida\n");
+                getchar();
+                /*system("cls");*/
+            }
+        } while(op_menu != 1);
+        criar_senha();
+    }
+    return;
+}
+/*void vanish(){
+    if(){
+        
+    }
+}*/
